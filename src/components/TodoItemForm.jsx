@@ -3,18 +3,18 @@ import { useDispatch } from "react-redux";
 import { addTodo } from "../redux/slices/todoListSlice";
 
 const NewTodoItem = () => {
-  const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
 
   const dispatch = useDispatch();
 
   function handleChange(e) {
     e.preventDefault();
-    setName(e.target.value);
+    setTitle(e.target.value);
   }
 
   function handleSubmit(event) {
     event.preventDefault();
-    dispatch(addTodo({ name }));
+    dispatch(addTodo({ title }));
   }
 
   return (
@@ -28,7 +28,7 @@ const NewTodoItem = () => {
           id="formInput"
           className="form-control"
           name="name"
-          value={name}
+          value={title}
           onChange={(e) => handleChange(e)}
           required
         />

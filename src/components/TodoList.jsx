@@ -1,9 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TodoItem from "./TodoItem";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { fetchTodos } from "../redux/slices/todoListSlice";
 
 const TodoList = () => {
-  const todoList = useSelector((state) => state.todo.todoList);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchTodos());
+  }, [dispatch]);
+
+  const { todoList, isLoading, error } = useSelector((state) => state.todo);
+
+  if (isLoading) {
+    return "loading...";
+  }
+
+  if (error) {
+    return error;
+  }
 
   return (
     <>

@@ -16,7 +16,7 @@ const TodoItem = (props) => {
         <th className="align-middle">
           <div className="checkbox">
             <label htmlFor={props.todoItem}>
-              <span className="ms-2">{props.todoItem.name}</span>
+              <span className="ms-2">{props.todoItem.title}</span>
             </label>
           </div>
         </th>
