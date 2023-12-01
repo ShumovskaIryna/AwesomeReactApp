@@ -15,6 +15,7 @@ const NewTodoItem = () => {
   function handleSubmit(event) {
     event.preventDefault();
     dispatch(addTodo({ title }));
+    setTitle("");
   }
 
   return (
