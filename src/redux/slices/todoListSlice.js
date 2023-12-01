@@ -49,18 +49,49 @@ export const deleteTodo = createAsyncThunk(
     }
   }
 );
+export const updateTodo = createAsyncThunk(
+  'todo/updateTodos',
+  async ({ id, title, checked }, { getState, dispatch }) => {
+    try {
+      const res = await axios.patch(`http://localhost:3000/todos/${id}`, {
+        id,
+        title,
+        checked,
+      });
+
+      if (res.error) {
+        console.error(res.error);
+      } else {
+        const updatedTodo = res.data;
+        dispatch(todoSlice.actions.updateTodo(updatedTodo));
+        return getState().todo.todoList;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+);
 
 export const todoSlice = createSlice({
   name: 'todo',
   initialState,
   reducers: {
     addTodo: (state, action) => {
-      state.todoList.push(action.payload);
+      state.todoList.unshift(action.payload);
       LocalStorage.createKeyWithData('todos', state.todoList);
     },
     deleteTodo: (state, action) => {
       state.todoList = state.todoList.filter((todo) => todo.id !== action.payload.id);
       LocalStorage.createKeyWithData('todos', state.todoList);
+    },
+    updateTodo: (state, action) => {
+      const { id, title, checked } = action.payload;
+      const updatedTodoIndex = state.todoList.findIndex((todo) => todo.id === id);
+
+      if (updatedTodoIndex !== -1) {
+        state.todoList[updatedTodoIndex] = { id, title, checked };
+        LocalStorage.createKeyWithData('todos', state.todoList);
+      }
     },
   },
   extraReducers: (builder) => {
@@ -94,6 +125,17 @@ export const todoSlice = createSlice({
       state.todoList = action.payload
     })
     builder.addCase(deleteTodo.rejected, (state, action) => {
+      state.isLoading = false
+      state.error = action.error.message
+    })
+    builder.addCase(updateTodo.pending, (state) => {
+      state.isLoading = true
+    })
+    builder.addCase(updateTodo.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.todoList = action.payload
+    })
+    builder.addCase(updateTodo.rejected, (state, action) => {
       state.isLoading = false
       state.error = action.error.message
     })
