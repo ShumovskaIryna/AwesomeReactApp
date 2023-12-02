@@ -3,15 +3,22 @@ import TodoItem from "./TodoItem";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { fetchTodos } from "../redux/slices/todoListSlice";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const TodoList = () => {
   const dispatch = useDispatch();
-  const [currentPage, setCurrentPage] = useState(1);
-  const todosPerPage = 7;
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const queryParams = new URLSearchParams(location.search);
+  const todosPerPage = parseInt(queryParams.get("limit")) || 7;
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(queryParams.get("page")) || 1
+  );
 
   useEffect(() => {
     dispatch(fetchTodos({ limit: todosPerPage, offset: currentPage }));
-  }, [dispatch, currentPage]);
+  }, [dispatch, currentPage, todosPerPage]);
 
   const { todoList, totalCount, isLoading, error } = useSelector(
     (state) => state.todo
@@ -26,21 +33,13 @@ const TodoList = () => {
   }
 
   const totalPages = Math.ceil(totalCount / todosPerPage);
-  /**
-   * Go to the previous page of the paginated list
-   */
-  const previousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage((currentPage) => currentPage - 1);
-    }
-  };
-  /**
-   * Go to the next page of the paginated list
-   */
-  const nextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage((currentPage) => currentPage + 1);
-    }
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    const params = new URLSearchParams(location.search);
+    params.set("page", page);
+    params.set("limit", todosPerPage);
+    navigate(`/?${params.toString()}`);
   };
 
   return (
@@ -71,14 +70,14 @@ const TodoList = () => {
             <button
               className="page-link"
               disabled={currentPage === 1}
-              onClick={() => setCurrentPage(1)}
+              onClick={() => handlePageChange(1)}
             >
               1
             </button>
             <button
               className="page-link"
               disabled={currentPage === 1}
-              onClick={() => previousPage()}
+              onClick={() => handlePageChange(currentPage - 1)}
             >
               {"<="}
             </button>
@@ -88,13 +87,13 @@ const TodoList = () => {
             <button
               className="page-link"
               disabled={currentPage === totalPages}
-              onClick={() => nextPage()}
+              onClick={() => handlePageChange(currentPage + 1)}
             >
               {"=>"}
             </button>
             <button
               className="page-link"
-              onClick={() => setCurrentPage(totalPages)}
+              onClick={() => handlePageChange(totalPages)}
               disabled={currentPage === totalPages}
             >
               {totalPages}
