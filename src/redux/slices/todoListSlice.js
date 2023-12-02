@@ -10,10 +10,14 @@ const initialState = {
 
 export const fetchTodos = createAsyncThunk(
   'todo/fetchTodos',
-  async () => {
-    const res = await axios('http://localhost:3000/todos')
+  async ({ limit, offset }) => {
+    const res = await axios(`http://localhost:3000/todos?_page=${offset}&_limit=${limit}`)
+
+    const { 'x-total-count': totalCount } = res.headers;
     const data = await res.data
-    return data
+    console.log(data)
+
+    return {data, headers: { totalCount }};
   }
 );
 
@@ -100,7 +104,9 @@ export const todoSlice = createSlice({
     })
     builder.addCase(fetchTodos.fulfilled, (state, action) => {
       state.isLoading = false
-      state.todoList = action.payload
+      console.log(action.payload)
+      state.todoList = action.payload.data
+      state.totalCount = action.payload.headers.totalCount
     })
     builder.addCase(fetchTodos.rejected, (state, action) => {
       state.isLoading = false
