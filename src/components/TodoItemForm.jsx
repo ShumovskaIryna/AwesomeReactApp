@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addTodo } from "../redux/slices/todoListSlice";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
+import Container from "react-bootstrap/Container";
 
 const NewTodoItem = () => {
   const [title, setTitle] = useState("");
@@ -12,20 +16,16 @@ const NewTodoItem = () => {
     setTitle(e.target.value);
   }
 
-  function handleSubmit(event) {
-    event.preventDefault();
+  function handleSubmit(e) {
+    e.preventDefault();
     dispatch(addTodo({ title }));
     setTitle("");
   }
 
   return (
-    <>
-      <form
-        className="d-flex justify-content-center align-items-center mb-4"
-        onSubmit={handleSubmit}
-      >
-        <input
-          type="text"
+    <Container>
+      <InputGroup>
+        <Form.Control
           id="formInput"
           className="form-control"
           name="name"
@@ -33,9 +33,11 @@ const NewTodoItem = () => {
           onChange={(e) => handleChange(e)}
           required
         />
-        <button type="submit">Add</button>
-      </form>
-    </>
+        <Button variant="dark" type="submit" onClick={(e) => handleSubmit(e)}>
+          Add
+        </Button>
+      </InputGroup>
+    </Container>
   );
 };
 

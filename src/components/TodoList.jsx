@@ -4,6 +4,11 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { fetchTodos } from "../redux/slices/todoListSlice";
 import { useLocation, useNavigate } from "react-router-dom";
+import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
+import Container from "react-bootstrap/Container";
+import Stack from "react-bootstrap/Stack";
+import Button from "react-bootstrap/Button";
+import ListGroup from "react-bootstrap/ListGroup";
 
 const TodoList = () => {
   const dispatch = useDispatch();
@@ -43,65 +48,57 @@ const TodoList = () => {
   };
 
   return (
-    <>
-      <table className="table mb-0">
-        <thead>
-          {todoList.length ? (
-            <tr>
-              <th scope="col">Task</th>
-              <th scope="col"></th>
-            </tr>
-          ) : (
-            <tr>
-              <th scope="col">Your List is empty</th>
-            </tr>
-          )}
-        </thead>
-        <tbody>
-          {todoList.map((el) => (
-            <TodoItem key={el.id} todoItem={el} />
-          ))}
-        </tbody>
-      </table>
+    <Container>
+      <Stack gap={3}>
+        {todoList.map((el) => (
+          <TodoItem key={el.id} todoItem={el} />
+        ))}
+      </Stack>
+
       {/* Pagination buttons */}
       {totalCount > todosPerPage && (
-        <nav className="mt-3" aria-label="Page navigation">
-          <ul className="pagination">
-            <button
-              className="page-link"
-              disabled={currentPage === 1}
-              onClick={() => handlePageChange(1)}
-            >
-              1
-            </button>
-            <button
-              className="page-link"
-              disabled={currentPage === 1}
-              onClick={() => handlePageChange(currentPage - 1)}
-            >
-              {"<="}
-            </button>
-            <button className={`page-item ${currentPage ? "active" : ""}`}>
-              {currentPage}
-            </button>
-            <button
-              className="page-link"
-              disabled={currentPage === totalPages}
-              onClick={() => handlePageChange(currentPage + 1)}
-            >
-              {"=>"}
-            </button>
-            <button
-              className="page-link"
-              onClick={() => handlePageChange(totalPages)}
-              disabled={currentPage === totalPages}
-            >
-              {totalPages}
-            </button>
-          </ul>
-        </nav>
+        <ListGroup
+          className="d-flex justify-content-center mt-3 mb-3"
+          horizontal
+        >
+          <Button
+            variant="outline-dark"
+            className="d-flex m-1"
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(1)}
+          >
+            1
+          </Button>
+          <Button
+            variant="outline-dark"
+            className="d-flex m-1"
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          >
+            <FaArrowLeft />
+          </Button>
+          <Button variant="dark" className="d-flex m-1">
+            {currentPage}
+          </Button>
+          <Button
+            variant="outline-dark"
+            className="d-flex m-1"
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            <FaArrowRight />
+          </Button>
+          <Button
+            variant="outline-dark"
+            className="d-flex m-1"
+            onClick={() => handlePageChange(totalPages)}
+            disabled={currentPage === totalPages}
+          >
+            {totalPages}
+          </Button>
+        </ListGroup>
       )}
-    </>
+    </Container>
   );
 };
 
