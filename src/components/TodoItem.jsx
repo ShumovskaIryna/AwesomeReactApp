@@ -9,16 +9,16 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 
 const TodoItem = (props) => {
-  const [isChecked, setChecked] = useState(props.todoItem.checked);
-  const [isDisabled, setDisabled] = useState(true);
-  const [title, setTitle] = useState(props.todoItem.title);
-
+  const [isChecked, setChecked] = useState(props.todoItem.checked); //for checkbox
+  const [isDisabled, setDisabled] = useState(true); // for pen icon (editing input || just read)
+  const [title, setTitle] = useState(props.todoItem.title); // for input
   const dispatch = useDispatch();
 
+  // Delete todo item
   const handleRemove = (todoItem) => {
     dispatch(deleteTodo(todoItem.id));
   };
-
+  // Update for checkbox (todoitem.checked)
   const handleCheck = (todoItem) => {
     dispatch(
       updateTodo({
@@ -28,10 +28,12 @@ const TodoItem = (props) => {
     );
     setChecked((prevChecked) => !prevChecked);
   };
+  // Listener on input value
   function handleChange(e) {
     e.preventDefault();
     setTitle(e.target.value);
   }
+  // Update for input value (todoitem.title)
   const handleUpdate = (todoItem) => {
     dispatch(
       updateTodo({
@@ -43,6 +45,7 @@ const TodoItem = (props) => {
 
   return (
     <Row className="d-flex justify-content-between">
+      {/* Checkbox */}
       <Col xs={1} md={1}>
         <div
           id={props.todoItem.id}
@@ -51,6 +54,7 @@ const TodoItem = (props) => {
           className={`checkbox ${isChecked ? "checked" : ""}`}
         ></div>
       </Col>
+      {/* Input Group (isDisabled just for reading || !isDisabled for editing) */}
       <Col xs={8} md={9}>
         <InputGroup>
           <Col xs={10} sm={11}>
@@ -83,7 +87,7 @@ const TodoItem = (props) => {
           )}
         </InputGroup>
       </Col>
-
+      {/* Edit */}
       <Col xs={1} md={1}>
         <FaPen
           role="update_button"
@@ -91,6 +95,7 @@ const TodoItem = (props) => {
           onClick={() => setDisabled((isDisabled) => !isDisabled)}
         />
       </Col>
+      {/* Delete */}
       <Col xs={1} md={1}>
         <FaTrash
           role="delete_button"

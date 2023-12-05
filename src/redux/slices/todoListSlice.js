@@ -6,7 +6,7 @@ const initialState = {
   isLoading: false,
   error: null,
 };
-
+// Get Todo List with pagination, and sort by id
 export const fetchTodos = createAsyncThunk(
   'todo/fetchTodos',
   async (params) => {
@@ -18,6 +18,7 @@ export const fetchTodos = createAsyncThunk(
   }
 );
 
+// Create new Todo Item
 export const addTodo = createAsyncThunk(
   'todo/createTodo',
   async (newTodo, { getState, dispatch }) => {
@@ -34,7 +35,7 @@ export const addTodo = createAsyncThunk(
     }
   }
 );
-
+// Delete Todo item by id
 export const deleteTodo = createAsyncThunk(
   'todo/deleteTodo',
   async (id, { getState, dispatch }) => {
@@ -50,6 +51,7 @@ export const deleteTodo = createAsyncThunk(
     }
   }
 );
+// Update Todo Item (title & checked) by id
 export const updateTodo = createAsyncThunk(
   'todo/updateTodos',
   async ({ id, title, checked }, { getState, dispatch }) => {
@@ -77,6 +79,7 @@ export const todoSlice = createSlice({
   name: 'todo',
   initialState,
   reducers: {
+    // work with LocalStorage Create, Delete & Update
     addTodo: (state, action) => {
       state.todoList.unshift(action.payload);
       state.todoList.pop();
@@ -96,6 +99,7 @@ export const todoSlice = createSlice({
       }
     },
   },
+  // extra reducers
   extraReducers: (builder) => {
     builder.addCase(fetchTodos.pending, (state) => {
       state.isLoading = true
