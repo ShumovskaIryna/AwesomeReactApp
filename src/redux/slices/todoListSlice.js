@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import axios from 'axios'
 import LocalStorage from '../../storage/LocalStorage';
-
+import TodoApi from '../../api/Todo'
 const initialState = {
   todoList: [],
   isLoading: false,
@@ -10,12 +9,10 @@ const initialState = {
 
 export const fetchTodos = createAsyncThunk(
   'todo/fetchTodos',
-  async ({ limit, offset }) => {
-    const res = await axios(`http://localhost:3000/todos?_page=${offset}&_limit=${limit}`)
-
+  async (params) => {
+    const res = await TodoApi.getTodosList(params);
     const { 'x-total-count': totalCount } = res.headers;
     const data = await res.data
-    console.log(data)
 
     return {data, headers: { totalCount }};
   }
@@ -25,7 +22,7 @@ export const addTodo = createAsyncThunk(
   'todo/createTodo',
   async (newTodo, { getState, dispatch }) => {
     try {
-      const res = await axios.post('http://localhost:3000/todos', {...newTodo, checked: false});
+      const res = await TodoApi.addTodoItem(newTodo)
       if (res.error) {
         console.error(res.error);
       } else {
@@ -42,7 +39,7 @@ export const deleteTodo = createAsyncThunk(
   'todo/deleteTodo',
   async (id, { getState, dispatch }) => {
     const state = getState();
-    const res = await axios.delete(`http://localhost:3000/todos/${id}`);
+    const res = await TodoApi.deleteTodoItem(id)
 
     if (res.error) {
       console.error(res.error);
@@ -57,7 +54,7 @@ export const updateTodo = createAsyncThunk(
   'todo/updateTodos',
   async ({ id, title, checked }, { getState, dispatch }) => {
     try {
-      const res = await axios.patch(`http://localhost:3000/todos/${id}`, {
+      const res = await TodoApi.updateTodoItem({
         id,
         title,
         checked,
@@ -82,6 +79,7 @@ export const todoSlice = createSlice({
   reducers: {
     addTodo: (state, action) => {
       state.todoList.unshift(action.payload);
+      state.todoList.pop();
       LocalStorage.createKeyWithData('todos', state.todoList);
     },
     deleteTodo: (state, action) => {
