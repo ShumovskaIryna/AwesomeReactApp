@@ -21,6 +21,7 @@ const TodoList = () => {
     parseInt(queryParams.get("page")) || 1
   );
 
+  // Fetch Todo List with pagination
   useEffect(() => {
     dispatch(fetchTodos({ limit: todosPerPage, offset: currentPage }));
   }, [dispatch, currentPage, todosPerPage]);
@@ -36,9 +37,9 @@ const TodoList = () => {
   if (error) {
     return error;
   }
-
   const totalPages = Math.ceil(totalCount / todosPerPage);
 
+  // Set Pages and set Query params for pagination
   const handlePageChange = (page) => {
     setCurrentPage(page);
     const params = new URLSearchParams(location.search);
@@ -49,6 +50,7 @@ const TodoList = () => {
 
   return (
     <Container>
+      {/* TodoList */}
       <Stack gap={3}>
         {todoList.map((el) => (
           <TodoItem key={el.id} todoItem={el} />

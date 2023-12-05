@@ -7,15 +7,17 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Container from "react-bootstrap/Container";
 
 const NewTodoItem = () => {
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(""); // for input form
 
   const dispatch = useDispatch();
 
+  // Listener on input value
   function handleChange(e) {
     e.preventDefault();
     setTitle(e.target.value);
   }
 
+  // Submit for creating new Todo Item
   function handleSubmit(e) {
     e.preventDefault();
     dispatch(addTodo({ title }));
